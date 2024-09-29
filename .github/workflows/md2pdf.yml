@@ -1,0 +1,33 @@
+# This is a basic workflow to help you get started with Actions
+
+name: md to pdf
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "main" ]
+    paths:
+    - 'reports/**.md'
+  pull_request:
+    branches: [ "main" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  makepdfs:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+      - uses: mkrakowitzer/actions-makepdfs@master
+        if: github.ref == 'refs/heads/master'
+        with:
+          markdown_dir: reports
+          output_dir: tmp
+      - uses: actions/upload-artifact@v3.2.1-node20
+        with:
+          name: platform-architecture-docs
+          path: tmp
